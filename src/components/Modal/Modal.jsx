@@ -1,18 +1,27 @@
-import { useEffect } from "react"
+import { useEffect, useCallback } from "react"
 import { ModalOrevlay, ModalWindow } from "./Modal.styled"
 import PropTypes from "prop-types"
 
-export const Modal= ( { srcLarge, altText, escapeFromModal, handleOnKeyDown})=> {
-    function handleKeyDown (e) {
-            if (e.key === "Escape") {
-            handleOnKeyDown(false);
-        }
-    };
-
+export const Modal = ({ srcLarge, altText, escapeFromModal, handleOnKeyDown }) => {
+    const handleKeyDown = useCallback(
+        (e) => {
+            if (e.key === 'Escape') {
+                handleOnKeyDown(false);
+            }
+        },
+            [handleOnKeyDown]
+        );
+    
     useEffect(() => {
-        document.addEventListener("keydown", handleKeyDown);
-        return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [])
+        const eventListener = (e) => {
+            handleKeyDown(e);
+        };
+
+        document.addEventListener('keydown', eventListener);
+        return () => {
+            document.removeEventListener('keydown', eventListener);
+        };
+    }, [handleKeyDown]);
 
         return (
             <ModalOrevlay id="modal" onClick={escapeFromModal}>
